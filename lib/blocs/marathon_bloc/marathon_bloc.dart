@@ -1,18 +1,38 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
+import 'package:runn/models/marathon.dart';
+import 'package:runn/repositories/marathon_repository.dart';
 
 part 'marathon_event.dart';
+
 part 'marathon_state.dart';
 
 class MarathonBloc extends Bloc<MarathonEvent, MarathonState> {
-  MarathonBloc() : super(MarathonInitial());
+  final MarathonRepository marathonRepository;
+
+  MarathonBloc({MarathonRepository marathonRepository})
+      : this.marathonRepository = marathonRepository ?? MarathonRepository(),
+        super(MarathonInitial());
+
+  Stream<MarathonState> mapMarathonLoadingToState(LoadMarathon event) async* {
+    yield LoadingMarathon();
+    Either<Exception, List<Marathon>> either =
+        await marathonRepository.fetchMarathon(filter: event.filter);
+    MarathonState marathonState = either.fold(
+        (l) => MarathonLoadingFailed("Oops! there was some error"),
+        (r) => MarathonLoaded(r));
+    yield marathonState;
+  }
 
   @override
   Stream<MarathonState> mapEventToState(
     MarathonEvent event,
   ) async* {
-    // TODO: implement mapEventToState
+    if (event is LoadMarathon) {
+      yield* mapMarathonLoadingToState(event);
+    }
   }
 }

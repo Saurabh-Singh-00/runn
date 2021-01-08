@@ -10,25 +10,25 @@ class Marathon {
   String organiserEmail;
   List<int> startLocation;
   List<int> endLocation;
-  int distance;
+  double distance;
   String type;
   List<SponsorType> sponsors;
 
   Marathon(
       {this.country,
-        this.state,
-        this.city,
-        this.pincode,
-        this.id,
-        this.dateTime,
-        this.title,
-        this.description,
-        this.organiserEmail,
-        this.startLocation,
-        this.endLocation,
-        this.distance,
-        this.type,
-        this.sponsors});
+      this.state,
+      this.city,
+      this.pincode,
+      this.id,
+      this.dateTime,
+      this.title,
+      this.description,
+      this.organiserEmail,
+      this.startLocation,
+      this.endLocation,
+      this.distance,
+      this.type,
+      this.sponsors});
 
   Marathon.fromJson(Map<String, dynamic> json) {
     country = json['country'];
@@ -46,7 +46,7 @@ class Marathon {
     type = json['type'];
     if (json['sponsors'] != null) {
       sponsors = new List<SponsorType>();
-      json['sponsor_type'].forEach((v) {
+      json['sponsors'].forEach((v) {
         sponsors.add(new SponsorType.fromJson(v));
       });
     }
@@ -68,7 +68,7 @@ class Marathon {
     data['distance'] = this.distance;
     data['type'] = this.type;
     if (this.sponsors != null) {
-      data['sponsor_type'] = this.sponsors.map((v) => v.toJson()).toList();
+      data['sponsors'] = this.sponsors.map((v) => v.toJson()).toList();
     }
     return data;
   }
