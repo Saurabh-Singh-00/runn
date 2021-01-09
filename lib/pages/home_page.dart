@@ -1,59 +1,63 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:runn/blocs/blocs.dart';
-import 'package:runn/pages/widgets/flexible_app_bar.dart';
-import 'package:runn/pages/widgets/loading_list.dart';
-import 'package:runn/pages/widgets/marathon_card.dart';
+import 'package:runn/pages/tabs/tab.dart';
+import 'package:runn/pages/tabs/tabs.dart';
 
 class HomePage extends StatelessWidget {
+  final StreamController<int> tabIndexStream = StreamController<int>.broadcast()
+    ..add(0);
+
+  final List<TabWidget> tabs = [
+    exploreTab,
+    statsTab,
+    profileTab,
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                expandedHeight: MediaQuery.of(context).size.height * 0.325,
-                backgroundColor: Colors.black87,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: FlexibleAppBar(),
-                ),
-              )
-            ];
-          },
-          body: BlocBuilder<MarathonBloc, MarathonState>(
-            builder: (context, state) {
-              if (state is MarathonLoadingFailed) {
-                return Center(
-                  child: Text(
-                    state.message,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                );
-              } else if (state is MarathonLoaded) {
-                if (state.marathons.isEmpty) {
-                  return Center(
-                    child: Text("No marathons Nearby"),
-                  );
-                }
-                return ListView.builder(
-                  itemCount: state.marathons.length,
-                  shrinkWrap: true,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-                  scrollDirection: Axis.vertical,
-                  itemBuilder: (context, index) {
-                    return MarathonCard(
-                      marathon: state.marathons[index],
-                    );
+      child: DefaultTabController(
+        initialIndex: 0,
+        length: tabs.length,
+        child: Builder(builder: (context) {
+          TabController tabController = DefaultTabController.of(context);
+          return Scaffold(
+            appBar: tabs[tabController.index].appBar,
+            body: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
+              children: tabs.map((tab) => tab.body).toList(),
+            ),
+            floatingActionButton: tabs[tabController.index].fab ?? Container(),
+            bottomNavigationBar: StreamBuilder<int>(
+              stream: tabIndexStream.stream,
+              initialData: 0,
+              builder: (context, snapshot) {
+                return BottomNavigationBar(
+                  onTap: (index) {
+                    tabIndexStream.add(index);
+                    tabController.animateTo(index);
                   },
+                  currentIndex: snapshot.data ?? 0,
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.explore),
+                      label: "Explore",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.bar_chart_rounded),
+                      label: "Stats",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.account_circle),
+                      label: "Profile",
+                    ),
+                  ],
                 );
-              }
-              return LoadingList();
-            },
-          ),
-        ),
+              },
+            ),
+          );
+        }),
       ),
     );
   }

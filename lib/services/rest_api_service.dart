@@ -91,7 +91,7 @@ class ReSTAPIService implements APIService {
       }
     } on SocketException catch (e) {
       rethrow;
-    } on ResultNotFoundException catch (e) {
+    } on CreationFailedException catch (e) {
       rethrow;
     }
   }
