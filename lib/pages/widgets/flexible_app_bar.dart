@@ -50,7 +50,7 @@ class FlexibleAppBar extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Hello Saurabh",
+                  "Hello Lady",
                   style: TextStyle(
                     fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
                     color: Colors.white,

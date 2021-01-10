@@ -1,25 +1,25 @@
 class Marathon {
   String country;
+  String id;
   String state;
   String city;
   int pincode;
-  String id;
   String dateTime;
   String title;
   String description;
   String organiserEmail;
-  List<int> startLocation;
-  List<int> endLocation;
+  List<double> startLocation;
+  List<double> endLocation;
   double distance;
   String type;
   List<SponsorType> sponsors;
 
   Marathon(
       {this.country,
+      this.id,
       this.state,
       this.city,
       this.pincode,
-      this.id,
       this.dateTime,
       this.title,
       this.description,
@@ -32,16 +32,16 @@ class Marathon {
 
   Marathon.fromJson(Map<String, dynamic> json) {
     country = json['country'];
+    id = json['id'];
     state = json['state'];
     city = json['city'];
     pincode = json['pincode'];
-    id = json['id'];
     dateTime = json['date_time'];
     title = json['title'];
     description = json['description'];
     organiserEmail = json['organiser_email'];
-    startLocation = json['start_location'].cast<int>();
-    endLocation = json['end_location'].cast<int>();
+    startLocation = json['start_location'].cast<double>();
+    endLocation = json['end_location'].cast<double>();
     distance = json['distance'];
     type = json['type'];
     if (json['sponsors'] != null) {
@@ -55,10 +55,10 @@ class Marathon {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['country'] = this.country;
+    data['id'] = this.id;
     data['state'] = this.state;
     data['city'] = this.city;
     data['pincode'] = this.pincode;
-    data['id'] = this.id;
     data['date_time'] = this.dateTime;
     data['title'] = this.title;
     data['description'] = this.description;
@@ -75,21 +75,21 @@ class Marathon {
 }
 
 class SponsorType {
-  String id;
+  String email;
   String name;
   String logo;
 
-  SponsorType({this.id, this.name, this.logo});
+  SponsorType({this.email, this.name, this.logo});
 
   SponsorType.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    email = json['email'];
     name = json['name'];
     logo = json['logo'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    data['email'] = this.email;
     data['name'] = this.name;
     data['logo'] = this.logo;
     return data;
