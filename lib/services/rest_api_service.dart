@@ -78,11 +78,13 @@ class ReSTAPIService implements APIService {
   }
 
   @override
-  Future<Map> post(dynamic url, Map<dynamic, dynamic> body,
+  Future<Map> post(dynamic url, Map body,
       {Map<dynamic, dynamic> headers}) async {
     try {
       http.Response response =
-          await http.post(url, headers: headers, body: body);
+          await http.post(url, body: json.encode(body), headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      });
       if (response.statusCode == 201) {
         return json.decode(response.body) as Map;
       } else {

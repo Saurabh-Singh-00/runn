@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:runn/blocs/blocs.dart';
 
 class FlexibleAppBar extends StatelessWidget {
   const FlexibleAppBar({
@@ -39,12 +41,18 @@ class FlexibleAppBar extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 26.0,
-                        backgroundImage: NetworkImage(
-                          'https://randomuser.me/api/portraits/women/11.jpg',
-                        ),
+                      BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          return CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 26.0,
+                            backgroundImage: NetworkImage(
+                              (state is Authenticated)
+                                  ? state.account.photoUrl
+                                  : 'https://randomuser.me/api/portraits/women/11.jpg',
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

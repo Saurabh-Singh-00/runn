@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
+import 'package:runn/injector/injector.dart';
 import 'package:runn/models/marathon.dart';
+import 'package:runn/models/marathon_by_runner.dart';
 import 'package:runn/repositories/marathon_repository.dart';
 
 part 'marathon_event.dart';
@@ -14,7 +16,8 @@ class MarathonBloc extends Bloc<MarathonEvent, MarathonState> {
   final MarathonRepository marathonRepository;
 
   MarathonBloc({MarathonRepository marathonRepository})
-      : this.marathonRepository = marathonRepository ?? MarathonRepository(),
+      : this.marathonRepository =
+            marathonRepository ?? injector.get<MarathonRepository>(),
         super(MarathonInitial());
 
   Stream<MarathonState> mapMarathonLoadingToState(LoadMarathon event) async* {

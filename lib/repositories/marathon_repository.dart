@@ -18,7 +18,12 @@ class MarathonRepository {
   }
 
   Future<Either<Exception, Marathon>> fetchMarathonDetails(
-      {Map filter}) async {}
+      String id, String country,
+      {Map filter}) async {
+    Either<Exception, Map> either = await marathonProvider
+        .fetchMarathonDetails(id, country, filter: filter);
+    return either.map((r) => Marathon.fromJson(r));
+  }
 
   Future<Either<Exception, List<Runner>>> fetchRunners(String marathonId,
       {Map filter}) async {
@@ -27,13 +32,39 @@ class MarathonRepository {
     return either.map((r) => r.map((e) => Runner.fromJson(e)).toList());
   }
 
-  Future<Either<Exception, MarathonByRunner>> participate({Map filter}) async {}
+  Future<Either<Exception, Runner>> participate(Runner runner,
+      {Map filter}) async {
+    Either<Exception, Map> either = await marathonProvider
+        .participate(runner.marathonId, runner.toJson(), filter: filter);
+    return either.map((r) => Runner.fromJson(r));
+  }
 
   Future<Either<Exception, List<MarathonByRunner>>> fetchMarathonsByRunner(
       {Map filter}) async {}
 
   Future<Either<Exception, List<MarathonBySponsor>>> fetchMarathonsBySponsor(
-      {Map filter}) async {}
+      String sponsorId,
+      {Map filter}) async {
+    Either<Exception, List<Map>> either = await marathonProvider
+        .fetchMarathonBySponsor(sponsorId, filter: filter);
+    return either
+        .map((r) => r.map((e) => MarathonBySponsor.fromJson(e)).toList());
+  }
 
-  Future<Either<Exception, bool>> hasParticipated({Map filter}) async {}
+  Future<Either<Exception, Runner>> hasParticipated(
+      String marathonId, String marathonCountry, String email,
+      {Map filter}) async {
+    Either<Exception, Map> either = await marathonProvider
+        .hasParticipated(marathonId, marathonCountry, email, filter: filter);
+    return either.map((r) => Runner.fromJson(r));
+  }
+
+  Future<Either<Exception, List<MarathonByRunner>>> fetchMarathonByRunner(
+      String userEmail,
+      {Map filter}) async {
+    Either<Exception, List<Map>> either =
+        await marathonProvider.fetchMarathonByRunner(userEmail, filter: filter);
+    return either
+        .map((r) => r.map((e) => MarathonByRunner.fromJson(e)).toList());
+  }
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:runn/blocs/blocs.dart';
 import 'package:runn/helpers/helpers.dart';
 import 'package:runn/models/marathon.dart';
 import 'package:runn/pages/marathon_detail_page.dart';
@@ -13,6 +16,9 @@ class MarathonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final DateTime dateTime = DateTime.tryParse(marathon.dateTime);
+    final String marathonDate = DateFormat.yMMMd().format(dateTime);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.25,
       clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -77,7 +83,7 @@ class MarathonCard extends StatelessWidget {
                         "KM",
                         style: Theme.of(context)
                             .textTheme
-                            .bodyText1
+                            .bodyText2
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -86,7 +92,8 @@ class MarathonCard extends StatelessWidget {
               ),
             ),
             Positioned.fill(
-              bottom: 8.0,
+              bottom: 16.0,
+              left: 16.0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
@@ -95,7 +102,18 @@ class MarathonCard extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
+                      "$marathonDate",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(color: Colors.white),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
                       marathon.title,
+                      maxLines: 2,
                       style: Theme.of(context)
                           .textTheme
                           .headline5
@@ -108,7 +126,7 @@ class MarathonCard extends StatelessWidget {
                       marathon.country,
                       style: Theme.of(context)
                           .textTheme
-                          .headline6
+                          .bodyText1
                           .copyWith(color: Colors.white),
                     ),
                   ),
