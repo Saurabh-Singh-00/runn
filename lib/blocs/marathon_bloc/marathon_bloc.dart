@@ -5,7 +5,6 @@ import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
 import 'package:runn/injector/injector.dart';
 import 'package:runn/models/marathon.dart';
-import 'package:runn/models/marathon_by_runner.dart';
 import 'package:runn/repositories/marathon_repository.dart';
 
 part 'marathon_event.dart';

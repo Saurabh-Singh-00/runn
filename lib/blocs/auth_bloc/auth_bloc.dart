@@ -32,6 +32,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async* {
     if (event is Authenticate) {
       yield* mapAuthenticateToState(event);
+    } else if (event is SignOut) {
+      yield UnAuthenticated();
+      googleAuth.signOut();
     }
   }
 }

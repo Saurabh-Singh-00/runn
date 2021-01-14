@@ -45,6 +45,9 @@ class Runn extends StatelessWidget {
           create: (context) => MyrunnBloc(authBloc),
           lazy: false,
         ),
+        BlocProvider<RaceBloc>(
+          create: (context) => RaceBloc(),
+        ),
       ],
       child: MaterialApp(
         title: "Runn",

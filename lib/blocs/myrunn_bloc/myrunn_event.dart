@@ -8,3 +8,5 @@ class LoadMarathonsByRunner extends MyrunnEvent {
 
   LoadMarathonsByRunner(this.userEmail);
 }
+
+class ResetRunns extends MyrunnEvent {}

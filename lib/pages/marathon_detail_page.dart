@@ -9,6 +9,7 @@ import 'package:runn/helpers/helpers.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:runn/models/marathon.dart';
 import 'package:runn/models/runner.dart';
+import 'package:runn/pages/race_page.dart';
 import 'package:runn/pages/runners_page.dart';
 
 class MarathonDetailPage extends StatelessWidget {
@@ -166,7 +167,7 @@ class MarathonDetailPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.0),
                   child: Text(
-                    "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.",
+                    "${marathon.description}",
                     textAlign: TextAlign.justify,
                     style: Theme.of(context)
                         .textTheme
@@ -294,26 +295,60 @@ class SponsorImageContainer extends StatelessWidget {
 
 class ParticipateButton extends StatelessWidget {
   final Marathon marathon;
-  const ParticipateButton({
+  final DateTime dateTime;
+  final DateTime now = DateTime.now();
+
+  ParticipateButton({
     Key key,
     this.marathon,
-  }) : super(key: key);
+  })  : this.dateTime = DateTime.tryParse(marathon.dateTime),
+        super(key: key);
 
   String buildParticipationText(ParticipationState state) {
     if (state is CheckingParticipation || state is ParticipationInitial)
       return "Checking..";
     if (state is Participating) return "Participating";
+    if (state is Participated && dateTime != null && dateTime.isAfter(now))
+      return "Start Runn";
     if (state is Participated) return "Already In";
-    if (state is CheckingParticipationFailed) return "Join the Runn";
+    if (state is CheckingParticipationFailed &&
+        dateTime != null &&
+        dateTime.isAfter(now)) return "Join the Runn";
+    if (state is CheckingParticipationFailed &&
+        dateTime != null &&
+        dateTime.isBefore(now)) return "Race is Over";
+    if (state is ParticipationFailed) return "Oops! Please try again";
     return "Participate";
+  }
+
+  void participate(ParticipationBloc bloc, GoogleSignInAccount acc) {
+    bloc.add(
+      Participate(
+        Runner(
+          marathonId: marathon.id,
+          marathonCountry: marathon.country,
+          email: acc.email,
+          name: acc.displayName,
+          joinedAt: null,
+          participationType: 'VIRTUAL',
+          pic: acc.photoUrl,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final GoogleSignInAccount acc = BlocProvider.of<AuthBloc>(context).account;
+
     ParticipationBloc participationBloc =
         BlocProvider.of<ParticipationBloc>(context);
-    participationBloc.add(CheckParticipation(
-        marathon.id, marathon.country, 'srbhsingh39@gmail.com'));
+
+    participationBloc
+        .add(CheckParticipation(marathon.id, marathon.country, acc.email));
+
+    final DateTime dateTime = DateTime.tryParse(marathon.dateTime);
+    final DateTime now = DateTime.now();
 
     return BlocBuilder<ParticipationBloc, ParticipationState>(
       buildWhen: (prevState, state) {
@@ -321,32 +356,24 @@ class ParticipateButton extends StatelessWidget {
       },
       builder: (context, state) {
         return RaisedButton(
-          onPressed: (state is CheckingParticipationFailed) ||
-                  (state is ParticipationFailed)
-              ? () {
-                  final GoogleSignInAccount acc =
-                      BlocProvider.of<AuthBloc>(context).account;
-                  if (acc != null) {
-                    participationBloc.add(
-                      Participate(
-                        Runner(
-                          marathonId: marathon.id,
-                          marathonCountry: marathon.country,
-                          email: acc.email,
-                          name: acc.displayName,
-                          joinedAt: null,
-                          participationType: 'VIRTUAL',
-                          pic: acc.photoUrl,
-                        ),
-                      ),
-                    );
-                    if (state is Participated) {
-                      BlocProvider.of<MyrunnBloc>(context)
-                          .add(LoadMarathonsByRunner(acc.email));
-                    }
-                  }
-                }
-              : null,
+          onPressed: () {
+            if (state is CheckingParticipationFailed ||
+                state is ParticipationFailed) {
+              if (dateTime.isAfter(now)) {
+                participate(participationBloc, acc);
+                BlocProvider.of<MyrunnBloc>(context)
+                    .add(LoadMarathonsByRunner(acc.email));
+              }
+            } else if (state is Participated && dateTime.isAfter(now)) {
+              // Start Runn
+              BlocProvider.of<RaceBloc>(context).add(LoadRace());
+              pushRoute(
+                  context,
+                  RacePage(
+                    marathon: marathon,
+                  ));
+            }
+          },
           color: Colors.deepOrangeAccent,
           elevation: 0.0,
           shape: RoundedRectangleBorder(

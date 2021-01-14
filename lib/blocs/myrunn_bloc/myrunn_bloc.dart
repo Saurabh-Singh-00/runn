@@ -25,7 +25,9 @@ class MyrunnBloc extends Bloc<MyrunnEvent, MyrunnState> {
   void myRunnListener(AuthState state) {
     print(state);
     if (state is Authenticated) {
-      this.add(LoadMarathonsByRunner(state.account.email));
+      add(LoadMarathonsByRunner(state.account.email));
+    } else if (state is UnAuthenticated) {
+      add(ResetRunns());
     }
   }
 
@@ -52,6 +54,8 @@ class MyrunnBloc extends Bloc<MyrunnEvent, MyrunnState> {
   ) async* {
     if (event is LoadMarathonsByRunner) {
       yield* mapMarathonLoadingByRunnerToState(event);
+    } else if (event is ResetRunns) {
+      yield MyrunnInitial();
     }
   }
 }

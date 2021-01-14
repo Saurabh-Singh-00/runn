@@ -27,7 +27,7 @@ class MarathonProvider extends BaseDataProvider {
   Future<Either<Exception, Map>> fetchMarathonDetails(String id, String country,
       {Map filter}) async {
     Uri uri = constructUrlWithQueryParams(
-        baseUrl, [_urlAllMarathon, id, country], filter ?? Map());
+        baseUrl, [_urlAllMarathon, country, id, 'detail'], filter ?? Map());
     Either<Exception, Map> either = await Task(() => restAPI.retrieve(uri))
         .attempt()
         .map((a) => a.leftMap((l) => (l as Exception)))

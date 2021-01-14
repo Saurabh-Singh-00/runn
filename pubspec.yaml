@@ -40,6 +40,9 @@ dependencies:
   intl: ^0.16.1
   flutter_map: ^0.10.1+1
   google_sign_in: ^4.5.9
+  stop_watch_timer: ^0.7.0
+  pedometer: ^2.0.2
+  geolocator: ^6.1.13
 
 dev_dependencies:
   flutter_test:

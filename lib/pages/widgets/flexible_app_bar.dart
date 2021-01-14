@@ -57,12 +57,21 @@ class FlexibleAppBar extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text(
-                  "Hello Lady",
-                  style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.bodyText1.fontSize,
-                    color: Colors.white,
-                  ),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (context, state) {
+                    String username = "Unknown";
+                    if (state is Authenticated) {
+                      username = "${state.account.displayName}";
+                    }
+                    return Text(
+                      "Hello $username !",
+                      style: TextStyle(
+                        fontSize:
+                            Theme.of(context).textTheme.bodyText1.fontSize,
+                        color: Colors.white,
+                      ),
+                    );
+                  },
                 ),
                 Text(
                   "Discover marathons near by.",
