@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:runn/blocs/blocs.dart';
 import 'package:runn/pages/tabs/tabs.dart';
 
 class HomePage extends StatelessWidget {
   final StreamController<int> tabIndexStream = StreamController<int>.broadcast()
     ..add(0);
 
-  final List<Widget> tabs = [ExploreTab(), MyRunnsTab(), ProfileTab()];
+  final List<Widget> tabs = [ExploreTab(), MyRunnsTab()];
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +47,6 @@ class HomePage extends StatelessWidget {
                     BottomNavigationBarItem(
                       icon: Icon(FontAwesomeIcons.running),
                       label: "My Runns",
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.account_circle),
-                      label: "Profile",
                     ),
                   ],
                 );

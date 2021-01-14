@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:runn/blocs/blocs.dart';
 
 class FlexibleAppBar extends StatelessWidget {
@@ -36,27 +37,6 @@ class FlexibleAppBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          return CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 26.0,
-                            backgroundImage: NetworkImage(
-                              (state is Authenticated)
-                                  ? state.account.photoUrl
-                                  : 'https://randomuser.me/api/portraits/women/11.jpg',
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     String username = "Unknown";

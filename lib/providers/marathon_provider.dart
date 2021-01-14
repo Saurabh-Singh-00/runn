@@ -95,4 +95,16 @@ class MarathonProvider extends BaseDataProvider {
         .run();
     return either;
   }
+
+  Future<Either<Exception, Map>> checkCompletion(
+      String marathonId, String email,
+      {Map filter}) async {
+    Uri uri = constructUrlWithQueryParams(baseUrl,
+        ['api/v1/user', 'stats', marathonId, email, 'complete'], filter);
+    Either<Exception, Map> either = await Task(() => restAPI.retrieve(uri))
+        .attempt()
+        .map((a) => a.leftMap((l) => (l as Exception)))
+        .run();
+    return either;
+  }
 }

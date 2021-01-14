@@ -3,6 +3,7 @@ import 'package:runn/models/marathon.dart';
 import 'package:runn/models/marathon_by_runner.dart';
 import 'package:runn/models/marathon_by_sponsor.dart';
 import 'package:runn/models/runner.dart';
+import 'package:runn/models/user_stats_by_marathon.dart';
 import 'package:runn/providers/marathon_provider.dart';
 
 class MarathonRepository {
@@ -66,5 +67,13 @@ class MarathonRepository {
         await marathonProvider.fetchMarathonByRunner(userEmail, filter: filter);
     return either
         .map((r) => r.map((e) => MarathonByRunner.fromJson(e)).toList());
+  }
+
+  Future<Either<Exception, UserStatsByMarathon>> checkParticipation(
+      String marathonId, String email,
+      {Map filter}) async {
+    Either<Exception, Map> either = await marathonProvider
+        .checkCompletion(marathonId, email, filter: filter);
+    return either.map((r) => UserStatsByMarathon.fromJson(r));
   }
 }

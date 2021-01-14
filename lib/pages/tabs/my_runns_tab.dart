@@ -7,6 +7,7 @@ import 'package:runn/helpers/helpers.dart';
 import 'package:runn/injector/injector.dart';
 import 'package:runn/models/marathon.dart';
 import 'package:runn/pages/marathon_detail_page.dart';
+import 'package:runn/pages/pages.dart';
 import 'package:runn/pages/widgets/loading_list.dart';
 import 'package:runn/repositories/marathon_repository.dart';
 
@@ -21,6 +22,88 @@ class MyRunnsTab extends StatelessWidget {
             pinned: true,
             title: Text("My Runns"),
             leading: Icon(FontAwesomeIcons.running),
+            actions: [
+              IconButton(
+                icon: Icon(FontAwesomeIcons.signOutAlt),
+                onPressed: () {
+                  BlocProvider.of<AuthBloc>(context).add(SignOut());
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => SignInPage()),
+                    (route) => false,
+                  );
+                },
+              ),
+            ],
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, state) {
+                            return CircleAvatar(
+                              radius: 46.0,
+                              backgroundImage: NetworkImage(
+                                (state is Authenticated)
+                                    ? state.account.photoUrl
+                                    : 'https://randomuser.me/api/portraits/women/11.jpg',
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: BlocBuilder<AuthBloc, AuthState>(
+                                builder: (context, state) {
+                                  return Text(
+                                    (state is Authenticated)
+                                        ? state.account.displayName
+                                        : 'Unknown',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style:
+                                        Theme.of(context).textTheme.headline6,
+                                  );
+                                },
+                              ),
+                            ),
+                            Flexible(
+                              child: BlocBuilder<AuthBloc, AuthState>(
+                                builder: (context, state) {
+                                  return Text(
+                                    (state is Authenticated)
+                                        ? state.account.email
+                                        : 'Unknown',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           )
         ];
       },
