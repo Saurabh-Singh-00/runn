@@ -15,14 +15,13 @@ part 'race_state.dart';
 class RaceBloc extends Bloc<RaceEvent, RaceState> {
   final StopWatchTimer stopWatchTimer = StopWatchTimer();
 
-  Stream<StepCount> stepCountStream = Pedometer.stepCountStream;
-
-  Stream<PedestrianStatus> pedestrianStatusStream =
-      Pedometer.pedestrianStatusStream;
-
   UserRepository userRepository = injector.get<UserRepository>();
 
   Position previousPosition;
+
+  double distance = 0.0;
+  String marathonId = "";
+  String userEmail = "";
 
   RaceBloc() : super(RaceInitial()) {
     initPlatformState();
@@ -61,42 +60,23 @@ class RaceBloc extends Bloc<RaceEvent, RaceState> {
     return either;
   }
 
-  void onStepCount(StepCount event) {
-    int steps = event.steps;
-    DateTime timeStamp = event.timeStamp;
-  }
-
-  void onPedestrianStatusChanged(PedestrianStatus event) {
-    String status = event.status;
-    DateTime timeStamp = event.timeStamp;
-    if (!(state is RaceInitial)) {
-      if (event.status == 'walking') {}
-    }
-  }
-
-  void onPedestrianStatusError(error) {}
-
-  void onStepCountError(error) {}
-
   Future<void> initPlatformState() async {
-    stepCountStream.listen(onStepCount).onError(onStepCountError);
-
-    pedestrianStatusStream
-        .listen(onPedestrianStatusChanged)
-        .onError(onPedestrianStatusError);
     stopWatchTimer.secondTime.listen(sendRaceData);
   }
 
   void sendRaceData(int seconds) async {
-    if (state is RaceStarted && seconds % 10 == 0) {
+    if ((state.runtimeType == RaceStarted ||
+            state.runtimeType == UpdatedDistance) &&
+        seconds % 10 == 0) {
       Either<Exception, Position> position = await determinePosition();
       position.fold((l) {}, (r) {
         if (previousPosition != null && previousPosition != r) {
+          distance += Geolocator.distanceBetween(previousPosition.latitude,
+              previousPosition.longitude, r.latitude, r.longitude);
           userRepository.sendUserStatsByMarathon(
-              (state as RaceStarted).marathonId,
-              (state as RaceStarted).email,
-              r.latitude,
-              r.longitude);
+              marathonId, userEmail, r.latitude, r.longitude);
+          add(UpdateDistance(distance));
+          print(distance);
         }
         previousPosition = r;
       });
@@ -110,13 +90,22 @@ class RaceBloc extends Bloc<RaceEvent, RaceState> {
   }
 
   Stream<RaceState> mapStartRaceToState(StartRace event) async* {
-    yield RaceStarted(event.marathonId, event.email);
+    yield RaceStarted(event.marathonId, event.email, 0.0);
+    marathonId = event.marathonId;
+    userEmail = event.email;
     stopWatchTimer.onExecute.add(StopWatchExecute.start);
   }
 
   Stream<RaceState> mapStopRaceToState(EndRace event) async* {
+    marathonId = "";
+    userEmail = "";
+    distance = 0.0;
     stopWatchTimer.onExecute.add(StopWatchExecute.reset);
-    yield RaceEnded();
+    yield RaceEnded(distance);
+  }
+
+  Stream<RaceState> mapUpdateDistanceToState(UpdateDistance event) async* {
+    yield UpdatedDistance(event.distance);
   }
 
   @override
@@ -127,6 +116,8 @@ class RaceBloc extends Bloc<RaceEvent, RaceState> {
       yield* mapStartRaceToState(event);
     } else if (event is EndRace) {
       yield* mapStopRaceToState(event);
+    } else if (event is UpdateDistance) {
+      yield* mapUpdateDistanceToState(event);
     }
   }
 }

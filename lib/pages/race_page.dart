@@ -48,7 +48,7 @@ class RacePage extends StatelessWidget {
       ),
       body: WillPopScope(
         onWillPop: () async {
-          if (raceBloc.state is RaceEnded) {
+          if (raceBloc.state.runtimeType == RaceEnded) {
             return true;
           }
           return await showDialog(
@@ -125,12 +125,42 @@ class RacePage extends StatelessWidget {
                             child: DetailChip(
                               iconData: FontAwesomeIcons.stopwatch,
                               title: "Distance",
-                              data: "${marathon.distance}",
+                              data: "${marathon.distance} KM",
                             ),
                           ),
                         ],
                       ),
                     ),
+                  ),
+                ),
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24.0),
+                        child: Icon(
+                          FontAwesomeIcons.road,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24.0, vertical: 16.0),
+                          child: Text(
+                            "${(state.runtimeType == UpdatedDistance) ? (state as UpdatedDistance).distance.toStringAsFixed(2) : 0.0} M",
+                            style: GoogleFonts.anton(
+                              textStyle: Theme.of(context).textTheme.headline6,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(child: Container()),
@@ -142,11 +172,14 @@ class RacePage extends StatelessWidget {
                     children: [
                       RaisedButton(
                         shape: StadiumBorder(),
-                        color: (state is RaceStarted)
+                        color: (state.runtimeType == RaceStarted ||
+                                state.runtimeType == UpdatedDistance)
                             ? Colors.redAccent
                             : Colors.green,
                         onPressed: () async {
-                          if (state is RaceStarted) {
+                          print(state);
+                          if (state.runtimeType == RaceStarted ||
+                              state.runtimeType == UpdatedDistance) {
                             raceBloc.add(EndRace());
                           } else {
                             GoogleSignInAccount acc =
@@ -162,7 +195,10 @@ class RacePage extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               horizontal: 16.0, vertical: 12.0),
                           child: Text(
-                            (state is RaceStarted) ? "Stop" : "Start",
+                            (state.runtimeType == RaceStarted ||
+                                    state.runtimeType == UpdatedDistance)
+                                ? "Stop"
+                                : "Start",
                             style:
                                 Theme.of(context).textTheme.headline6.copyWith(
                                       fontWeight: FontWeight.bold,

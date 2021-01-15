@@ -12,6 +12,12 @@ class StartRace extends RaceEvent {
   StartRace(this.marathonId, this.email);
 }
 
+class UpdateDistance extends RaceEvent {
+  final double distance;
+
+  UpdateDistance(this.distance);
+}
+
 class PauseRace extends RaceEvent {}
 
 class ResumeRace extends RaceEvent {}

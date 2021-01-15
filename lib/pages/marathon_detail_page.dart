@@ -250,7 +250,8 @@ class SponsorImageContainer extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Image.network(
-            'http://scanpapyrus.com/images/logos/samsung-logo.png',
+            sponsorType.logo ??
+                'http://scanpapyrus.com/images/logos/samsung-logo.png',
             fit: BoxFit.contain,
           ),
         ),

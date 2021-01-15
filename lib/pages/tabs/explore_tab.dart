@@ -35,19 +35,26 @@ class ExploreTab extends StatelessWidget {
                 child: Text("No marathons Nearby"),
               );
             }
-            return ListView.builder(
-              itemCount: state.marathons.length,
-              shrinkWrap: true,
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-              scrollDirection: Axis.vertical,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: MarathonCard(
-                    marathon: state.marathons[index],
-                  ),
-                );
+            return RefreshIndicator(
+              onRefresh: () async {
+                if (state is MarathonLoaded || state is MarathonLoadingFailed) {
+                  BlocProvider.of<MarathonBloc>(context).add(LoadMarathon({}));
+                }
               },
+              child: ListView.builder(
+                itemCount: state.marathons.length,
+                shrinkWrap: true,
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: MarathonCard(
+                      marathon: state.marathons[index],
+                    ),
+                  );
+                },
+              ),
             );
           }
           return LoadingList();
