@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:runn/blocs/blocs.dart';
 import 'package:runn/helpers/helpers.dart';
 import 'package:runn/models/marathon.dart';
 import 'package:runn/pages/marathon_detail_page.dart';

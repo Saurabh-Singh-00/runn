@@ -8,7 +8,7 @@ An app for participating in Marathons virtually
 
 
 ### Features
-- Companion Smatch watch app
+- [Companion Smatch watch app](https://github.com/Saurabh-Singh-00/runn-wear "Wear App")
 - Google Sign In
 - Participate in marathons Virtually or Onsite
 - Just participate and run whenever you like
@@ -16,6 +16,18 @@ An app for participating in Marathons virtually
 - Watch out for distance travelled
 - See other runners in marathon
 - Best of all this app keeps you healty
+
+### Getting Started
+- Before running the app please setup and start the [Backend server](https://github.com/Saurabh-Singh-00/runn-backend/tree/astra "Backend Astra")
+- After your backend has successfully started please obtain the IP address of your local computer
+
+- Linux / Mac `ifconfig`
+
+- Windows `ipconfig`
+
+- You will see the IPv4 address like `192.168.0.104`
+
+- Replace `baseUrl` in `lib/providers/base_data_provider.dart` with your IP address
 
 ![App Poster](images/WearOSPoster.jpg "App Poster")
 

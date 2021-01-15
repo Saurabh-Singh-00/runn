@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
-import 'package:pedometer/pedometer.dart';
 import 'package:runn/injector/injector.dart';
 import 'package:runn/repositories/user_repository.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';

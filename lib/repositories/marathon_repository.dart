@@ -40,9 +40,6 @@ class MarathonRepository {
     return either.map((r) => Runner.fromJson(r));
   }
 
-  Future<Either<Exception, List<MarathonByRunner>>> fetchMarathonsByRunner(
-      {Map filter}) async {}
-
   Future<Either<Exception, List<MarathonBySponsor>>> fetchMarathonsBySponsor(
       String sponsorId,
       {Map filter}) async {
