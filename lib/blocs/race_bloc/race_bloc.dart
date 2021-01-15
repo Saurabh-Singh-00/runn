@@ -93,10 +93,10 @@ class RaceBloc extends Bloc<RaceEvent, RaceState> {
       position.fold((l) {}, (r) {
         if (previousPosition != null && previousPosition != r) {
           userRepository.sendUserStatsByMarathon(
-            (state as RaceStarted).marathonId,
-            (state as RaceStarted).email,
-            r.latitude,
-            r.longitude);
+              (state as RaceStarted).marathonId,
+              (state as RaceStarted).email,
+              r.latitude,
+              r.longitude);
         }
         previousPosition = r;
       });

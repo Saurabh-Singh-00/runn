@@ -47,9 +47,22 @@ class UserProvider extends BaseDataProvider {
               email: email,
               lat: lat,
               long: long,
-              time: null,
+              time: DateTime.now().toIso8601String(),
             ).toJson()))
         .attempt()
+        .map((a) => a.leftMap((l) => (l as Exception)))
+        .run();
+    return either;
+  }
+
+  Future<Either<Exception, List<Map>>> fetchUserStatsByMarathon(
+      String marathonId, String email,
+      {Map filter}) async {
+    Uri uri = constructUrlWithQueryParams(
+        baseUrl, [_urlAllUser, _urlUserStats, marathonId, email], filter);
+    Either<Exception, List<Map>> either = await Task(() => restAPI.get(uri))
+        .attempt()
+        .map((a) => a.map((r) => r.map((e) => (e as Map)).toList()))
         .map((a) => a.leftMap((l) => (l as Exception)))
         .run();
     return either;

@@ -15,6 +15,25 @@ class RacePage extends StatelessWidget {
 
   const RacePage({Key key, this.marathon}) : super(key: key);
 
+  AlertDialog buildDialog(
+      RaceBloc raceBloc, BuildContext context, VoidCallback onPressed) {
+    return AlertDialog(
+        title: Text('Are you sure you want to End Race'),
+        actions: <Widget>[
+          FlatButton(
+              child: Text('End Race'),
+              onPressed: () {
+                if (raceBloc.state is RaceStarted) {
+                  raceBloc.add(EndRace());
+                }
+                Navigator.of(context).pop(true);
+              }),
+          FlatButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(false)),
+        ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final RaceBloc raceBloc = BlocProvider.of<RaceBloc>(context);
@@ -35,16 +54,7 @@ class RacePage extends StatelessWidget {
           return await showDialog(
               context: context,
               builder: (_) {
-                return AlertDialog(
-                    title: Text('Are you sure you want to End Race'),
-                    actions: <Widget>[
-                      FlatButton(
-                          child: Text('End Race'),
-                          onPressed: () => Navigator.of(context).pop(true)),
-                      FlatButton(
-                          child: Text('Cancel'),
-                          onPressed: () => Navigator.of(context).pop(false)),
-                    ]);
+                return buildDialog(raceBloc, context, () {});
               });
         },
         child: BlocBuilder<RaceBloc, RaceState>(

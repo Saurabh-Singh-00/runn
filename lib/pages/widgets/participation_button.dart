@@ -9,6 +9,7 @@ import 'package:runn/models/marathon.dart';
 import 'package:runn/models/runner.dart';
 import 'package:runn/models/user_stats_by_marathon.dart';
 import 'package:runn/pages/race_page.dart';
+import 'package:runn/pages/user_stats_page.dart';
 
 class ParticipateButton extends StatelessWidget {
   final Marathon marathon;
@@ -83,7 +84,11 @@ class ParticipateButton extends StatelessWidget {
                     .add(LoadMarathonsByRunner(acc.email));
               }
             } else if (state is Participated) {
-              AlertDialog alert(String title, {Widget display}) => AlertDialog(
+              AlertDialog alert(String title,
+                      {String actionText,
+                      Widget display,
+                      VoidCallback onPressed}) =>
+                  AlertDialog(
                     content: new Row(
                       children: [
                         display ?? CircularProgressIndicator(),
@@ -97,8 +102,11 @@ class ParticipateButton extends StatelessWidget {
                     actionsPadding: EdgeInsets.only(right: 8.0),
                     actions: [
                       FlatButton(
-                        onPressed: () {},
-                        child: Text("Show Stats"),
+                        onPressed: onPressed ??
+                            () {
+                              Navigator.of(context).pop();
+                            },
+                        child: Text(actionText ?? "Go Back"),
                       )
                     ],
                   );
@@ -134,13 +142,20 @@ class ParticipateButton extends StatelessWidget {
                   barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
-                    return alert(
-                      "You have already finished the Race!",
-                      display: Icon(
-                        FontAwesomeIcons.checkCircle,
-                        color: Colors.green,
-                      ),
-                    );
+                    return alert("You have already finished the Race!",
+                        display: Icon(
+                          FontAwesomeIcons.checkCircle,
+                          color: Colors.green,
+                        ),
+                        actionText: "Show Stats", onPressed: () {
+                      pushReplacementRoute(
+                        context,
+                        UserStatsPage(
+                          marathonId: marathon.id,
+                          email: acc.email,
+                        ),
+                      );
+                    });
                   },
                 );
               });

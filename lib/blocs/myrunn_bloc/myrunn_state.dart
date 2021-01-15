@@ -11,6 +11,12 @@ class MarathonLoadedByRunner extends MyrunnState {
   final List<MarathonByRunner> marathons;
 
   MarathonLoadedByRunner(this.marathons);
+
+  @override
+  bool operator ==(other) {
+    return (other is MarathonLoadedByRunner) &&
+        (this.marathons.length == other.marathons.length);
+  }
 }
 
 class MarathonLoadingFailedByRunner extends MyrunnState {

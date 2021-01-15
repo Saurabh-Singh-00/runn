@@ -34,4 +34,13 @@ class UserRepository {
         marathonId, email, lat, long);
     return either.map((r) => UserStatsByMarathon.fromJson(r));
   }
+
+  Future<Either<Exception, List<UserStatsByMarathon>>> fetchUserStatsByMarathon(
+      String marathonId, String email,
+      {Map filter}) async {
+    Either<Exception, List<Map>> either = await userProvider
+        .fetchUserStatsByMarathon(marathonId, email, filter: filter);
+    return either
+        .map((r) => r.map((e) => UserStatsByMarathon.fromJson(e)).toList());
+  }
 }

@@ -16,7 +16,7 @@ class Runn extends StatelessWidget {
   final AuthBloc authBloc;
 
   Runn({Key key, this.authBloc}) : super(key: key) {
-    authBloc.add(Authenticate());
+    authBloc.add(AuthenticateSilently());
   }
   @override
   Widget build(BuildContext context) {

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_map/plugin_api.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:latlong/latlong.dart';
 import 'package:intl/intl.dart';
 import 'package:runn/blocs/blocs.dart';
 import 'package:runn/helpers/helpers.dart';
@@ -10,6 +8,7 @@ import 'package:runn/models/marathon.dart';
 import 'package:runn/pages/marathons_by_sponsor_page.dart';
 import 'package:runn/pages/runners_page.dart';
 import 'package:runn/pages/widgets/detail_chip.dart';
+import 'package:runn/pages/widgets/marathon_map_location.dart';
 import 'package:runn/pages/widgets/participation_button.dart';
 
 class MarathonDetailPage extends StatelessWidget {
@@ -218,51 +217,6 @@ class FlexibleSpaceBarBackground extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class MarathonMapLocation extends StatelessWidget {
-  const MarathonMapLocation({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.25,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      child: FlutterMap(
-        options: MapOptions(
-          center: LatLng(51.5, -0.09),
-          zoom: 13.0,
-        ),
-        layers: [
-          TileLayerOptions(
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c'],
-          ),
-          MarkerLayerOptions(
-            markers: [
-              Marker(
-                width: 48.0,
-                height: 48.0,
-                point: LatLng(51.5, -0.09),
-                builder: (ctx) => Container(
-                  child: Icon(
-                    FontAwesomeIcons.mapPin,
-                    color: Colors.deepOrangeAccent,
-                    size: 44.0,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

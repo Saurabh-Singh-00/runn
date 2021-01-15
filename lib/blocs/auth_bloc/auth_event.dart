@@ -5,4 +5,6 @@ abstract class AuthEvent {}
 
 class Authenticate extends AuthEvent {}
 
+class AuthenticateSilently extends AuthEvent {}
+
 class SignOut extends AuthEvent {}

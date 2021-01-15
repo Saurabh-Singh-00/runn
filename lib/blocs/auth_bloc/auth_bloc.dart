@@ -15,6 +15,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial());
   GoogleSignInAccount account;
 
+  Stream<AuthState> mapAuthenticateSilentlyToState(
+      AuthenticateSilently event) async* {
+    yield Authenticating();
+    Either<Exception, GoogleSignInAccount> either =
+        await googleAuth.signInSilently();
+    if (either.isRight()) {
+      account = either.fold((l) => null, (r) => r);
+    }
+    AuthState authState = either.fold((l) => UnAuthenticated(),
+        (r) => r == null ? UnAuthenticated() : Authenticated(r));
+    yield authState;
+  }
+
   Stream<AuthState> mapAuthenticateToState(Authenticate event) async* {
     yield Authenticating();
     Either<Exception, GoogleSignInAccount> either = await googleAuth.signIn();
@@ -32,6 +45,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async* {
     if (event is Authenticate) {
       yield* mapAuthenticateToState(event);
+    } else if (event is AuthenticateSilently) {
+      yield* mapAuthenticateSilentlyToState(event);
     } else if (event is SignOut) {
       yield UnAuthenticated();
       googleAuth.signOut();

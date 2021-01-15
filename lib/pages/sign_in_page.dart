@@ -15,7 +15,7 @@ class SignInPage extends StatelessWidget {
             pushReplacementRoute(context, HomePage());
           } else {
             Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text("Oops! Some Error occured!")));
+                SnackBar(content: Text("Please sign in to proceed")));
           }
         },
         child: Column(
